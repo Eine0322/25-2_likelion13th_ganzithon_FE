@@ -1,5 +1,5 @@
-function homePage() {
-  return <div>homePage</div>
+function HomePage() {
+  return <div>홈화면입니다</div>
 }
 
-export default homePage
+export default HomePage

@@ -1,5 +1,5 @@
 function UploadPage() {
-  return <div>UploadPage</div>
+  return <div>입력창입니다</div>
 }
 
 export default UploadPage
