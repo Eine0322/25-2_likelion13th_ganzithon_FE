@@ -99,8 +99,8 @@ hgroup,
 menu,
 nav,
 section {
-  display: block;
   box-sizing: border-box;
+  display: flex;
 }
 body {
   line-height: 1;
