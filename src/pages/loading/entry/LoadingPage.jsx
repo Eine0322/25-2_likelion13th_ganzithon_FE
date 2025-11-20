@@ -1,21 +1,24 @@
 import { Icon } from '../../../components/Icon/Icon'
 import './LoadingPage.css'
 import { useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 
 function LoadingPage() {
   // 3초 후 자동으로 페이지 넘김
   const LOADING_DELAY = 3000
 
   const navigate = useNavigate()
+  const location = useLocation()
+
+  const certResult = location.state?.certResult
 
   useEffect(() => {
     const timer = setTimeout(() => {
-      navigate(`/result`)
+      navigate(`/result`, { state: { certResult: certResult } })
     }, LOADING_DELAY)
 
     return () => clearTimeout(timer)
-  }, [navigate])
+  }, [navigate, certResult])
 
   return (
     <div className='loading__container'>
