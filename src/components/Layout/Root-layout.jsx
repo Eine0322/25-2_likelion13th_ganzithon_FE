@@ -15,12 +15,12 @@ const RootLayout = () => {
   }
   const title = getTitle(location.pathname)
   return (
-    <>
-      <TopBar title={title} />
-      <div className='container'>
+    <div className='layout__container'>
+      <TopBar title={title} className='layout__topbar' />
+      <div className='layout__page'>
         <Outlet />
       </div>
-    </>
+    </div>
   )
 }
 

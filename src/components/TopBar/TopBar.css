@@ -2,7 +2,8 @@
   align-items: center;
   justify-content: center;
   width: 100%;
-  position: relative;
+  position: sticky;
+  top: 0px;
   height: 80px;
   background-color: var(--color-background);
   box-shadow: var(--shadow-default);
