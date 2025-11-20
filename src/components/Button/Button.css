@@ -1,0 +1,17 @@
+.footer {
+  position: absolute;
+  padding: 15px;
+  width: 100%;
+  bottom: 0;
+}
+.footer__button {
+  width: 100%;
+  height: 66px;
+  border-radius: 15px;
+  background-color: var(--color-main);
+  color: var(--color-background);
+  box-shadow: var(--shadow-button);
+  font-size: 24px;
+  font-family: 'Taenada', sans-serif;
+  padding-top: 8px;
+}

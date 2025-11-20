@@ -1,5 +1,11 @@
 import './Button.css'
 
 export default function Button({ content, onClick }) {
-  return <button onClick={onClick}>{content}</button>
+  return (
+    <div className='footer'>
+      <button className='footer__button' onClick={onClick}>
+        {content}
+      </button>
+    </div>
+  )
 }
