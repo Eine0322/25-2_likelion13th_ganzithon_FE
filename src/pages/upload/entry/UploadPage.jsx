@@ -30,7 +30,11 @@ export default function UploadPage() {
 
   // 공통 인풋 변경, 인풋 형식 바뀌면 값 저장 법도 바꿔주기
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    let { name, value, type, checked } = e.target;
+
+    if (name === "disease") {
+      value = value.toUpperCase().replace(/[^A-Z0-9]/g, ""); 
+    }
 
     setForm((prev) => ({
       ...prev,
@@ -134,51 +138,43 @@ export default function UploadPage() {
           className="btn-upload-image"
           onClick={() => setShowPopup(true)}
         >
-          사진으로 등록
+          + 사진으로 등록
         </button>
 
-        <p className="check-photo">
-          공휴일과 야간은 진찰료/조제료 30% 추가 금액이 붙어요.
+        <p className="info-text">
+          사진을 추가하면 아래 내용이 자동으로 기입돼요.
         </p>
 
         {/* 연령 / 병원 종류 */}
-        <div>
-          <label>
-            연령
-            <select
-              name="age_group"
-              className="select-age"
-              value={form.age_group}
-              onChange={handleChange} // 값이 변경 되면 실행
-              placeholder="연령을 선택해주세요"
-            >
-              <option value="">선택해주세요</option>
-              <option value="소아">20세 미만</option>
-              <option value="성인">20세 이상 ~ 65세 미만</option>
-              <option value="노인">65세 이상</option>
-            </select>
-          </label>
+        <div className="select-wrapper">
+          <span className="select-label">연령</span>
+          <select
+            name="age_group"
+            className="select-age"
+            required
+          >
+            <option value="">연령을 선택해주세요</option>
+            <option value="소아">20세 미만</option>
+            <option value="성인">20세 이상 ~ 65세 미만</option>
+            <option value="노인">65세 이상</option>
+          </select>
         </div>
 
-        <div>
-          <label>
-            병원 종류
-            <select
-              name="dept"
-              className="select-dept"
-              value={form.dept}
-              onChange={handleChange} // 값이 변경 되면 실행
-              placeholder="진료과목을 선택해주세요"
-            >
-              <option value="">선택해주세요</option>
-              <option value="일반의">일반의</option>
-              <option value="내과">내과</option>
-              <option value="신경과">신경과</option>
-              <option value="정신과">정신과</option>
-              <option value="외과">외과</option>
-              <option value="정형외과">정형외과</option>
-            </select>
-          </label>
+        <div className="select-wrapper">
+          <span className="select-label">병원 종류</span>
+          <select
+            name="dept"
+            className="select-dept"
+            required
+          >
+            <option value="">진료 과목을 선택해주세요</option>
+            <option value="일반의">일반의</option>
+            <option value="내과">내과</option>
+            <option value="신경과">신경과</option>
+            <option value="정신과">정신과</option>
+            <option value="외과">외과</option>
+            <option value="정형외과">정형외과</option>
+          </select>
         </div>
 
         {/* 공휴일 / 야간 여부 */}
@@ -206,7 +202,7 @@ export default function UploadPage() {
           </label>
         </div>
 
-        <p className="check-info">
+        <p className="info-text">
           공휴일과 야간은 진찰료/조제료 30% 추가 금액이 붙어요.
         </p>
 
@@ -254,7 +250,7 @@ export default function UploadPage() {
         </div>
 
         {/* 약 정보 여러 개 */}
-        <h3>처방 약물</h3>
+        <label className="drug-text">처방 약물</label>
         {form.drug_items.map((drug, index) => (
           <div
             key={index}
@@ -317,7 +313,7 @@ export default function UploadPage() {
         </button>
         {error && <p className="upload-error">에러: {error}</p>}
       </div>
-      
+
       {/* 제출 버튼 */}
       <div className="submit-button-fixed">
         <Button content="결과보기" onClick={handleSubmit} />
