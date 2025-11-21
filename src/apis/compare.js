@@ -1,18 +1,23 @@
+import axios from "axios";
+
 export async function postCompare(payload) {
-  // 백엔드가 준 url로 교체
-  const response = await fetch("http://127.0.0.1:8000/compare/", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(payload),
-  });
+  try {
+    const response = await axios.post(
+      `${import.meta.env.VITE_SERVER_DOMAIN}/compare/`,
+      payload, // axios는 자동으로 JSON 생성해줌!
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
 
-  if (!response.ok) {
-    // 에러 처리는 상황에 맞게
-    const text = await response.text();
-    throw new Error(`API Error: ${response.status} / ${text}`);
+    return response.data; // axios는 .data에 JSON 응답이 들어있음
+  } catch (error) {
+    // axios 에러 구조에 맞게 처리
+    const status = error.response?.status;
+    const message = error.response?.data;
+
+    throw new Error(`API Error: ${status} / ${JSON.stringify(message)}`);
   }
-
-  return response.json(); // 결과 JSON
 }

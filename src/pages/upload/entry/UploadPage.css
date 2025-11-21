@@ -1,0 +1,171 @@
+/* 전체 UploadPage 영역: 헤더(80px) 아래를 전부 차지 */
+.upload-page-container {
+    position: fixed;
+    top: 80px;
+    /* 헤더 높이 */
+    left: 0;
+    right: 0;
+    bottom: 0;
+    display: flex;
+}
+
+/* form을 세로로: 위에 스크롤, 아래에 버튼 */
+.upload-page-form {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+/* 중간 내용만 스크롤 */
+.upload-page-scroll {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px 16px 35px;
+    /* 아래 버튼과 겹치지 않게 약간 패딩 */
+}
+
+/* 하단 고정 버튼 영역 */
+.submit-button-fixed {
+    flex-shrink: 0;
+    padding: 12px 16px 24px;
+    background-color: #ffffff;
+    box-shadow: 0 -4px 10px rgba(0, 0, 0, 0.05);
+    /* 위쪽 살짝 그림자 */
+}
+
+/* 질병 코드 섹션 */
+.disease-section {
+    margin-bottom: 16px;
+}
+
+.disease-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+}
+
+.disease-label {
+    font-weight: bold;
+}
+
+.disease-link-button {
+    background-color: #3b82f6;
+    color: #ffffff;
+    padding: 6px 12px;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 13px;
+}
+
+.disease-input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/* 본인부담금 섹션 */
+.fee-section {
+    margin-bottom: 16px;
+}
+
+.fee-label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 4px;
+}
+
+.fee-input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+}
+
+/* 처방 약물 카드 */
+.drug-card {
+    border: 1px solid #ccc;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    background: #f8f9ff;
+}
+
+.drug-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.drug-col-name {
+    flex: 2;
+}
+
+.drug-col-dose,
+.drug-col-times,
+.drug-col-days {
+    flex: 1;
+}
+
+.drug-input {
+    width: 100%;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid #ccc;
+}
+
+.drug-input-center {
+    text-align: center;
+}
+
+/* 제출 버튼 래퍼 */
+.submit-button-fixed {
+    margin-top: 24px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+}
+
+/* 에러 메시지 */
+.upload-error {
+    color: red;
+}
+
+/* 팝업 전체 배경 */
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+/* 팝업 박스 */
+.popup-box {
+    background: white;
+    padding: 20px 24px;
+    border-radius: 12px;
+    text-align: center;
+    width: 80%;
+    max-width: 320px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+}
+
+/* 닫기 버튼 */
+.popup-close {
+    margin-top: 16px;
+    padding: 8px 14px;
+    background: #3b82f6;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    font-size: 14px;
+}
