@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import Button from '../../../components/Button/Button'; 
 
 export default function HomePage() {
   const navigate = useNavigate();
@@ -21,9 +22,7 @@ export default function HomePage() {
       <h1>과잉 zero</h1>
       <p>과잉 진단은 이제 그만!</p>
 
-      <button onClick={goToUpload} style={{ marginTop: 24 }}>
-        과잉 제로 바로 가기
-      </button>
+      <Button content="진단서 등록하기" onClick={goToUpload} />
     </div>
   );
 }

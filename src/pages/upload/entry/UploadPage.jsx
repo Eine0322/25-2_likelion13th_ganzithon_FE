@@ -1,13 +1,14 @@
 import { useState } from "react";
 import { postCompare } from "../../../apis/compare";
 import { useNavigate } from 'react-router-dom'
+import Button from '../../../components/Button/Button'; 
+import "./UploadPage.css";
 
 const initialForm = {
   dept: "",
   age_group: "",
   disease: "",
   user_fee: "",
-  user_days: "",
   is_saturday: false,
   is_night: false,
   drug_items: [
@@ -24,11 +25,16 @@ export default function UploadPage() {
   const [form, setForm] = useState(initialForm);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+  const [showPopup, setShowPopup] = useState(false); // 사진으로 추가 팝업
 
   // 공통 인풋 변경, 인풋 형식 바뀌면 값 저장 법도 바꿔주기
   const handleChange = (e) => {
-    const { name, value, type, checked } = e.target;
+    let { name, value, type, checked } = e.target;
+
+    if (name === "disease") {
+      value = value.toUpperCase().replace(/[^A-Z0-9]/g, ""); 
+    }
 
     setForm((prev) => ({
       ...prev,
@@ -80,306 +86,250 @@ export default function UploadPage() {
     setLoading(true);
     setError(null);
 
-    try {
-      // 숫자/boolean 형 변환
-      const payload = {
-        dept: form.dept,
-        age_group: form.age_group,
-        disease: form.disease,
-        user_fee: Number(form.user_fee),
-        user_days: Number(form.user_days),
-        is_saturday: Boolean(form.is_saturday),
-        is_night: Boolean(form.is_night),
-        drug_items: form.drug_items.map((item) => ({
+    
+    // 숫자/boolean 형 변환
+    const payload = {
+      dept: form.dept,
+      age_group: form.age_group,
+      disease: form.disease,
+      user_fee: Number(form.user_fee),
+      is_saturday: Boolean(form.is_saturday),
+      is_night: Boolean(form.is_night),
+      drug_items: form.drug_items
+        .filter((item) => item.drug_name.trim() !== "") // 비어있으면 제외
+        .map((item) => ({
           drug_name: item.drug_name,
           user_once_dose: Number(item.user_once_dose),
           user_daily_times: Number(item.user_daily_times),
           user_days: Number(item.user_days),
         })),
-      };
-      console.log("생성된 payload:", payload);
+    };
+    console.log("생성된 payload:", payload);
 
-      const result = await postCompare(payload)
-      console.log('백엔드 결과:', result)
-      // 현지님께 입력값 전달 
-      navigate('/result', {
+    try {
+      // 2) 백엔드에 보내고 응답 받기
+      const data = await postCompare(payload);
+      console.log("백엔드 응답:", data);
+
+      // data = { comparison_results: { ... } } 형태
+      const { comparison_results } = data;
+
+      // 3) 현지님(ResultPage)에 comparison_results 넘기기
+      navigate(`/loading`, {
         state: {
-          input: payload, // 사용자가 입력한 값
+          comparison_results, // 이 안에 treatment_fee, treatment_days, drug_items_comparison 다 있음
         },
-      })
-
-
+      });
     } catch (err) {
       console.error(err);
-      setError(err.message);
+      setError("서버 요청 중 오류가 발생했습니다.");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <form onSubmit={handleSubmit} style={{ padding: 16 }}>
-      <h2>진단서 등록</h2>
+  <div className="upload-page-container">
+    <form onSubmit={handleSubmit} className="upload-page-form">
+      {/* 중간: 스크롤 되는 부분 */}
+      <div className="upload-page-scroll">
+        <button
+          type="button"
+          className="btn-upload-image"
+          onClick={() => setShowPopup(true)}
+        >
+          + 사진으로 등록
+        </button>
 
-      {/* 연령 / 병원 종류 */}
-      <div>
-        <label>
-          연령
+        <p className="info-text">
+          사진을 추가하면 아래 내용이 자동으로 기입돼요.
+        </p>
+
+        {/* 연령 / 병원 종류 */}
+        <div className="select-wrapper">
+          <span className="select-label">연령</span>
           <select
             name="age_group"
-            value={form.age_group}
-            onChange={handleChange} // 값이 변경 되면 실행
-            placeholder="연령을 선택해주세요"
+            className="select-age"
+            required
           >
-            <option value="">선택해주세요</option>
+            <option value="">연령을 선택해주세요</option>
             <option value="소아">20세 미만</option>
             <option value="성인">20세 이상 ~ 65세 미만</option>
             <option value="노인">65세 이상</option>
           </select>
-        </label>
-      </div>
+        </div>
 
-      <div>
-        <label>
-          병원 종류
+        <div className="select-wrapper">
+          <span className="select-label">병원 종류</span>
           <select
             name="dept"
-            value={form.dept}
-            onChange={handleChange} // 값이 변경 되면 실행
-            placeholder="진료과목을 선택해주세요"
+            className="select-dept"
+            required
           >
-            <option value="">선택해주세요</option>
-            <option value="0">일반의</option>
-            <option value="1">내과</option>
-            <option value="2">신경과</option>
-            <option value="3">정신과</option>
-            <option value="4">외과</option>
-            <option value="5">정형외과</option>
+            <option value="">진료 과목을 선택해주세요</option>
+            <option value="일반의">일반의</option>
+            <option value="내과">내과</option>
+            <option value="신경과">신경과</option>
+            <option value="정신과">정신과</option>
+            <option value="외과">외과</option>
+            <option value="정형외과">정형외과</option>
           </select>
-        </label>
-      </div>
+        </div>
 
-      {/* 공휴일 / 야간 여부 */}
-      <div>
-        <label>
-          공휴일/토요일
+        {/* 공휴일 / 야간 여부 */}
+        <div className="check-row">
+          <label>
+            <input
+              type="checkbox"
+              name="is_saturday"
+              className="checkbox-saturday"
+              checked={form.is_saturday}
+              onChange={handleChange}
+            />
+            공휴일/토요일
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="is_night"
+              className="checkbox-night"
+              checked={form.is_night}
+              onChange={handleChange}
+            />
+            평일 야간(18:00~)
+          </label>
+        </div>
+
+        <p className="info-text">
+          공휴일과 야간은 진찰료/조제료 30% 추가 금액이 붙어요.
+        </p>
+
+        {/* 질병 코드 */}
+        <div className="disease-section">
+          <div className="disease-header">
+            <label className="disease-label">질병 코드</label>
+
+            {/* 오른쪽 링크 버튼 */}
+            <a
+              href="https://www.koicd.kr/mobile/kcd/list.do"   // 원하는 질병코드 사이트로 수정!
+              target="_blank"
+              rel="noopener noreferrer"
+              className="disease-link-button"
+            >
+              질병코드 검색 사이트 이동
+            </a>
+          </div>
+
+          {/* input 박스 */}
           <input
-            type="checkbox"
-            name="is_saturday"
-            checked={form.is_saturday}
+            name="disease"
+            value={form.disease}
             onChange={handleChange}
+            placeholder="질병 코드를 입력해주세요 (eg. A062)"
+            className="disease-input"
           />
-        </label>
-      </div>
+        </div>
 
-      <div>
-        <label>
-          평일 야간(18:00~)
+
+        {/* 본인부담금 */}
+        <div className="fee-section">
+          <label className="fee-label">
+            본인부담금
+          </label>
+
           <input
-            type="checkbox"
-            name="is_night"
-            checked={form.is_night}
+            type="number"
+            name="user_fee"
+            value={form.user_fee}
             onChange={handleChange}
+            placeholder="진료비를 입력해주세요 (eg. 15000)"
+            className="fee-input"
           />
-        </label>
-      </div>
+        </div>
 
-      {/* 질병 코드 */}
-      <div style={{ marginBottom: 16 }}>
-        <div style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          marginBottom: 4
-        }}>
-          <label style={{ fontWeight: "bold" }}>질병 코드</label>
-
-          {/* 오른쪽 링크 버튼 */}
-          <a
-            href="https://www.koicd.kr/mobile/kcd/list.do"   // 원하는 질병코드 사이트로 수정!
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              backgroundColor: "#3b82f6",
-              color: "white",
-              padding: "6px 12px",
-              borderRadius: "6px",
-              textDecoration: "none",
-              fontSize: "13px"
-            }}
+        {/* 약 정보 여러 개 */}
+        <label className="drug-text">처방 약물</label>
+        {form.drug_items.map((drug, index) => (
+          <div
+            key={index}
+            className="drug-card"
           >
-            질병코드 검색 사이트 이동
-          </a>
-        </div>
-
-        {/* input 박스 */}
-        <input
-          name="disease"
-          value={form.disease}
-          onChange={handleChange}
-          placeholder="질병 코드를 입력해주세요 (eg. A062)"
-          style={{
-            width: "100%",
-            padding: "12px",
-            borderRadius: "8px",
-            border: "1px solid #ccc"
-          }}
-        />
-      </div>
-
-
-      {/* 본인부담금 / 진료일수 */}
-      <div style={{ marginBottom: 16 }}>
-        <label style={{ display: "block", fontWeight: "bold", marginBottom: 4 }}>
-          본인부담금
-        </label>
-
-        <input
-          type="number"
-          name="user_fee"
-          value={form.user_fee}
-          onChange={handleChange}
-          placeholder="진료비를 입력해주세요 (eg. 15000)"
-          style={{
-            width: "100%",
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-          }}
-        />
-      </div>
-
-
-      <div style={{ marginBottom: 16 }}>
-        <label style={{ display: "block", fontWeight: "bold", marginBottom: 4 }}>
-          진료 일 수
-        </label>
-
-        <input
-          type="number"
-          name="user_days"
-          value={form.user_days}
-          onChange={handleChange}
-          placeholder="진료 일 수를 입력해주세요 (eg. 5)"
-          style={{
-            width: "100%",
-            padding: "10px",
-            borderRadius: "8px",
-            border: "1px solid #ccc",
-          }}
-        />
-      </div>
-
-      {/* 약 정보 여러 개 */}
-      <h3>처방 약물</h3>
-      {form.drug_items.map((drug, index) => (
-        <div
-          key={index}
-          style={{
-            border: "1px solid #ccc",
-            padding: 12,
-            marginBottom: 12,
-            borderRadius: 8,
-            background: "#f8f9ff"
-          }}
-        >
-              {/* 가로 정렬 */}
-              <div style={{
-                display: "flex",
-                alignItems: "center",
-                gap: 12
-              }}>
-                {/* 약품명 */}
-                <div style={{ flex: 2 }}>
-                  <input
-                    name="drug_name"
-                    value={drug.drug_name}
-                    onChange={(e) => handleDrugChange(index, e)}
-                    placeholder="약품명"
-                    style={{
-                      width: "100%",
-                      padding: 8,
-                      borderRadius: 6,
-                      border: "1px solid #ccc"
-                    }}
-                  />
-                </div>
-
-                {/* 1회 투약량 */}
-                <div style={{ flex: 1 }}>
-                  <input
-                    type="number"
-                    name="user_once_dose"
-                    value={drug.user_once_dose}
-                    onChange={(e) => handleDrugChange(index, e)}
-                    placeholder="투약량"
-                    style={{
-                      width: "100%",
-                      padding: 8,
-                      borderRadius: 6,
-                      border: "1px solid #ccc",
-                      textAlign: "center"
-                    }}
-                  />
-                </div>
-
-                {/* 1일 투약 횟수 */}
-                <div style={{ flex: 1 }}>
-                  <input
-                    type="number"
-                    name="user_daily_times"
-                    value={drug.user_daily_times}
-                    onChange={(e) => handleDrugChange(index, e)}
-                    placeholder="횟수"
-                    style={{
-                      width: "100%",
-                      padding: 8,
-                      borderRadius: 6,
-                      border: "1px solid #ccc",
-                      textAlign: "center"
-                    }}
-                  />
-                </div>
-
-                {/* 투약 일수 */}
-                <div style={{ flex: 1 }}>
-                  <input
-                    type="number"
-                    name="user_days"
-                    value={drug.user_days}
-                    onChange={(e) => handleDrugChange(index, e)}
-                    placeholder="일수"
-                    style={{
-                      width: "100%",
-                      padding: 8,
-                      borderRadius: 6,
-                      border: "1px solid #ccc",
-                      textAlign: "center"
-                    }}
-                  />
-                </div>
+            {/* 가로 정렬 */}
+            <div className="drug-row">
+              {/* 약품명 */}
+              <div className="drug-col-name">
+                <input
+                  name="drug_name"
+                  value={drug.drug_name}
+                  onChange={(e) => handleDrugChange(index, e)}
+                  placeholder="약품명"
+                  className="drug-input"
+                />
               </div>
-   
-          {form.drug_items.length > 1 && (
-            <button type="button" onClick={() => handleRemoveDrug(index)}>
-              이 약 삭제
-            </button>
-          )}
-        </div>
-      ))}
 
-      <button type="button" onClick={handleAddDrug}>
-        약 추가
-      </button>
+              {/* 1회 투약량 */}
+              <div className="drug-col-dose">
+                <input
+                  type="number"
+                  name="user_once_dose"
+                  value={drug.user_once_dose}
+                  onChange={(e) => handleDrugChange(index, e)}
+                  placeholder="투약량"
+                  className="drug-input drug-input-center"
+                />
+              </div>
+
+              {/* 1일 투약 횟수 */}
+              <div className="drug-col-times">
+                <input
+                  type="number"
+                  name="user_daily_times"
+                  value={drug.user_daily_times}
+                  onChange={(e) => handleDrugChange(index, e)}
+                  placeholder="횟수"
+                  className="drug-input drug-input-center"
+                />
+              </div>
+
+              {/* 투약 일수 */}
+              <div className="drug-col-days">
+                <input
+                  type="number"
+                  name="user_days"
+                  value={drug.user_days}
+                  onChange={(e) => handleDrugChange(index, e)}
+                  placeholder="일수"
+                  className="drug-input drug-input-center"
+                />
+              </div>
+            </div>
+          </div>
+        ))}
+
+        <button type="button" onClick={handleAddDrug} className="btn-add-drug">
+          + 
+        </button>
+        {error && <p className="upload-error">에러: {error}</p>}
+      </div>
 
       {/* 제출 버튼 */}
-      <div style={{ marginTop: 24 }}>
-        <button type="submit" disabled={loading}>
-          {loading ? "전송 중..." : "결과 보기"}
-        </button>
+      <div className="submit-button-fixed">
+        <Button content="결과보기" onClick={handleSubmit} />
       </div>
-
-      {error && <p style={{ color: "red" }}>에러: {error}</p>}
     </form>
+
+    {showPopup && (
+      <div className="popup-overlay">
+        <div className="popup-box">
+          <p>사진 업로드 기능은 준비 중입니다.</p>
+          <button className="popup-close" onClick={() => setShowPopup(false)}>
+            닫기
+          </button>
+        </div>
+      </div>
+    )}
+  </div>
   );
 }
