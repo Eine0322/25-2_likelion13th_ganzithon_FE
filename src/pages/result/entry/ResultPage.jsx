@@ -9,20 +9,52 @@ import { formatExtra, formatIntPercent, formatMoney, formatPercent } from '../ho
 
 import { useResultApi } from '../api/useResultApi'
 import { useState } from 'react'
+import api from '../../../apis/client'
 
 function ResultPage() {
   const navigate = useNavigate()
   const { state } = useLocation()
   const [isFocus, setIsFocus] = useState(false)
 
+  const [question, setQuestion] = useState('')
+  const [answer, setAnswer] = useState('')
+
   const handleClick = () => {
     navigate(`/`)
   }
 
-  console.log(state)
+  if (!state || !state.certResult) {
+    return (
+      <>
+        <div className='result__error'>
+          잘못된 접근입니다 :(
+          <br />
+          진단서를 다시 등록해주세요.
+        </div>
+        <Button content='홈 화면으로 가기' onClick={handleClick} />
+      </>
+    )
+  }
 
-  console.log(state.certResult.info.drug_name)
+  const handleAsk = async () => {
+    if (!question.trim()) return
 
+    try {
+      const res = await api.post('/ai_answer/', { question })
+      setAnswer(res.result)
+    } catch (err) {
+      console.error('검색 API 오류:', err)
+      setAnswer('오류 발생. 새로고침 후 다시 시도해주세요.')
+    }
+  }
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter') {
+      handleAsk()
+    }
+  }
+
+  // 빨간줄 무시해도 됩니댜. 뭐 규칙 때문이라 작동엔 상관ㄴㄴ
   const { info, loading, error } = useResultApi(
     state.certResult.info.disease,
     state.certResult.info.drug_name,
@@ -34,16 +66,16 @@ function ResultPage() {
         <div className='result__loader'></div>
       </div>
     )
-  if (error) return <div>에러 발생</div>
-
-  if (!state || !state.certResult) {
+  if (error)
     return (
-      <>
-        <div className='result__container'>잘못된 접근입니다.</div>
-        <Button content='홈 화면으로 가기' onClick={handleClick} />
-      </>
+      <div className='result__container'>
+        <div className='result__error'>
+          에러 발생 :(
+          <br />
+          새로고침해주세요
+        </div>
+      </div>
     )
-  }
 
   const cost = state.certResult.treatment_fee
   const days = state.certResult.treatment_days
@@ -124,13 +156,12 @@ function ResultPage() {
               onFocus={() => setIsFocus(true)}
               onBlur={() => setIsFocus(false)}
               placeholder='타이레놀 주의사항 알려줘'
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              onKeyDown={handleKeyDown}
             ></input>
           </div>
-          <p className='result__info--text'>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias culpa maxime in ullam
-            voluptate! Nostrum animi repellat ratione, repudiandae harum molestiae, nulla aperiam
-            veniam ut expedita quis eaque, maiores sapiente!
-          </p>
+          <p className='result__search--text'>{answer}</p>
         </div>
       </div>
       <Button content='홈 화면으로 가기' onClick={handleClick} />
