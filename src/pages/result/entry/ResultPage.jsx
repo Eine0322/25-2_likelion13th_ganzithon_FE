@@ -18,6 +18,7 @@ function ResultPage() {
 
   const [question, setQuestion] = useState('')
   const [answer, setAnswer] = useState('')
+  const [searchLoading, setSearchLoading] = useState(false)
 
   const handleClick = () => {
     navigate(`/`)
@@ -40,11 +41,14 @@ function ResultPage() {
     if (!question.trim()) return
 
     try {
+      setSearchLoading(true)
       const res = await api.post('/ai_answer/', { question })
       setAnswer(res.result)
     } catch (err) {
       console.error('검색 API 오류:', err)
       setAnswer('오류 발생. 새로고침 후 다시 시도해주세요.')
+    } finally {
+      setSearchLoading(false)
     }
   }
 
@@ -161,7 +165,9 @@ function ResultPage() {
               onKeyDown={handleKeyDown}
             ></input>
           </div>
-          <p className='result__search--text'>{answer}</p>
+          <div className='result__search--text'>
+            {searchLoading ? <div className='result__search--loader'></div> : answer}
+          </div>
         </div>
       </div>
       <Button content='홈 화면으로 가기' onClick={handleClick} />

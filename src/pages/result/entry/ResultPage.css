@@ -169,6 +169,32 @@
   line-height: 17px;
 }
 
+.result__search--loader {
+  margin: 5px 17px;
+  width: 10px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  animation: l5 1s infinite linear alternate;
+}
+@keyframes l5 {
+  0% {
+    box-shadow: 20px 0 var(--color-main), -20px 0 var(--color-logo-background);
+    background: var(--color-main);
+  }
+  33% {
+    box-shadow: 20px 0 var(--color-main), -20px 0 var(--color-logo-background);
+    background: var(--color-logo-background);
+  }
+  66% {
+    box-shadow: 20px 0 var(--color-logo-background), -20px 0 var(--color-main);
+    background: var(--color-logo-background);
+  }
+  100% {
+    box-shadow: 20px 0 var(--color-logo-background), -20px 0 var(--color-main);
+    background: var(--color-main);
+  }
+}
+
 .result__loader--container {
   display: flex;
   width: 100%;
