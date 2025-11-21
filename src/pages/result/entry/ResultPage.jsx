@@ -8,10 +8,12 @@ import Button from '../../../components/Button/Button'
 import { formatExtra, formatIntPercent, formatMoney, formatPercent } from '../hooks/useFormat'
 
 import { useResultApi } from '../api/useResultApi'
+import { useState } from 'react'
 
 function ResultPage() {
   const navigate = useNavigate()
   const { state } = useLocation()
+  const [isFocus, setIsFocus] = useState(false)
 
   const handleClick = () => {
     navigate(`/`)
@@ -112,6 +114,23 @@ function ResultPage() {
           <p className='result__info--text'>{info.drug_info}</p>
           <h1 className='result__info--title'>건강 관리</h1>
           <p className='result__info--text'>{info.health_tip}</p>
+        </div>
+        <h1 className='result__search--title'>더 궁금한 점이 있나요?</h1>
+        <div className='result__search'>
+          <div className={`result__search--bar ${isFocus ? 'focus' : ''}`}>
+            <Icon className='result__search--icon' name='common-search' width={16} height={16} />
+            <input
+              className='result__search--input'
+              onFocus={() => setIsFocus(true)}
+              onBlur={() => setIsFocus(false)}
+              placeholder='타이레놀 주의사항 알려줘'
+            ></input>
+          </div>
+          <p className='result__info--text'>
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias culpa maxime in ullam
+            voluptate! Nostrum animi repellat ratione, repudiandae harum molestiae, nulla aperiam
+            veniam ut expedita quis eaque, maiores sapiente!
+          </p>
         </div>
       </div>
       <Button content='홈 화면으로 가기' onClick={handleClick} />
