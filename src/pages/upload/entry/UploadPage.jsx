@@ -83,8 +83,8 @@ export default function UploadPage() {
       age_group: form.age_group,
       disease: form.disease,
       user_fee: Number(form.user_fee),
-      is_saturday: Boolean(form.is_saturday),
-      is_night: Boolean(form.is_night),
+      is_saturday: form.is_saturday,
+      is_night: form.is_night,
       drug_items: form.drug_items
         .filter((item) => item.drug_name.trim() !== '') // 비어있으면 제외
         .map((item) => ({
@@ -105,11 +105,14 @@ export default function UploadPage() {
       const { comparison_results } = data
 
       // 3) 현지님(ResultPage)에 comparison_results 넘기기
-      navigate(`/loading`, {
+      navigate('/loading', {
         state: {
-          comparison_results, // 이 안에 treatment_fee, treatment_days, drug_items_comparison 다 있음
+          comparison_results,             // 기존 값
+          disease: form.disease,          // 추가 1
+          drug_name: form.drug_items?.[0]?.drug_name,    // 추가 2
         },
-      })
+      });
+
     } catch (err) {
       console.error(err)
       setError('서버 요청 중 오류가 발생했습니다.')
@@ -136,7 +139,13 @@ export default function UploadPage() {
           {/* 연령 / 병원 종류 */}
           <div className='select-wrapper'>
             <span className='select-label'>연령</span>
-            <select name='age_group' className='select-age' required>
+            <select
+              name='age_group'
+              className='select-age'
+              value={form.age_group}
+              onChange={handleChange}
+              required
+            >
               <option value=''>연령을 선택해주세요</option>
               <option value='소아'>20세 미만</option>
               <option value='성인'>20세 이상 ~ 65세 미만</option>
@@ -146,7 +155,13 @@ export default function UploadPage() {
 
           <div className='select-wrapper'>
             <span className='select-label'>병원 종류</span>
-            <select name='dept' className='select-dept' required>
+            <select
+              name='dept'
+              className='select-dept'
+              value={form.dept}
+              onChange={handleChange}
+              required
+            >
               <option value=''>진료 과목을 선택해주세요</option>
               <option value='일반의'>일반의</option>
               <option value='내과'>내과</option>
@@ -281,6 +296,7 @@ export default function UploadPage() {
                 </div>
               </div>
             </div>
+
           ))}
 
           <button type='button' onClick={handleAddDrug} className='btn-add-drug'>
@@ -291,7 +307,7 @@ export default function UploadPage() {
 
         {/* 제출 버튼 */}
         <div className='submit-button-fixed'>
-          <Button content='결과 보기' onClick={handleSubmit} />
+          <Button content='결과 보기' type='submit' />
         </div>
       </form>
 
