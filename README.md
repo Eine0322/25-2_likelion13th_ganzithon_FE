@@ -1,6 +1,16 @@
-## 📍 프로젝트 개요
+<div align="center">
 
----
+<!-- logo -->
+<img width="379" height="132" alt="Group 2" src="https://github.com/user-attachments/assets/61113e04-cb4b-426f-99cb-7b043cf53a7b" />
+
+
+### Web: 과잉진료 AI 비교 서비스 과잉ZERO
+
+<br/> [<img src="https://img.shields.io/badge/프로젝트 기간-2025.10.31~2025.1.22-blue?style=flat&logo=&logoColor=white" />]()
+
+</div> 
+
+## 📍 프로젝트 개요
 
 **과잉제로**는 공공데이터를 기반으로 사용자가 받은 진료와 처방이
 
@@ -16,9 +26,9 @@
 
 건강과 관련된 **간단한 질문에 AI가 답변**해주는 기능을 통해 의료 정보 접근성을 높이고자 하였습니다.
 
-## 📍 주요 기능
+<br/>
 
----
+## 📍 주요 기능
 
 - 진료 내역 및 처방 내역 입력
 - 질병명 입력 시 코드 자동 매칭
@@ -29,9 +39,23 @@
 - Upstage LLM을 활용한 AI 건강 질의응답 기능
 - 결과 분석 중 로딩 상태 및 지연 안내 UI 제공
 
+<br/>
+
+## 📍 사용 스택
+**ROLE : Frontend**
+<div>
+  <img src="https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB" />
+  <img src="https://img.shields.io/badge/vite-%23646CFF.svg?style=for-the-badge&logo=vite&logoColor=white"/>
+    <img src="https://img.shields.io/badge/css-%23663399.svg?style=for-the-badge&logo=css&logoColor=white"/>
+  <img src="https://img.shields.io/badge/html5-%23E34F26.svg?style=for-the-badge&logo=html5&logoColor=white"/>
+<img src="https://img.shields.io/badge/javascript-%23323330.svg?style=for-the-badge&logo=javascript&logoColor=%23F7DF1E"/>
+</div>
+
+<br/>
+
+
 ## 📍 상세 페이지
 
----
 <img width="1089" height="614" alt="image" src="https://github.com/user-attachments/assets/9cbe516f-33e2-42ba-88ce-fa04b4116208" />
 
 <img width="1280" height="719" alt="image" src="https://github.com/user-attachments/assets/bcab8d1e-f4a0-423f-aa1e-b017d741abc5" />
